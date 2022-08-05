@@ -17,8 +17,7 @@ class PixivandsooncrawlerPipeline:
         if isinstance(item, DataItem):
             path = SAVE_DIR
             if ONE_KEYWORD_ONE_DIR:
-                
-                if not os.path.exists(os.path.join(path, item['keyword'])):
+                if not os.path.isdir(os.path.join(path, item['keyword'])):
                     os.mkdir(os.path.join(path, item['keyword']))
                 path = os.path.join(path, item['keyword'])
 

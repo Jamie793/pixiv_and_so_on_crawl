@@ -16,27 +16,26 @@ NEWSPIDER_MODULE = 'PixivAndSoOnCrawler.spiders'
 # ======================================START===========================================
 
 # User configuration
-# The image page num, per page 60 num
-IMAGE_PAGE_NUM = 50
+# The image page num, per page 60 or 50 num
+IMAGE_PAGE_NUM = 20
 
-# The need to crawl keyword
+# When use keyword spider, will use this keyword
 KEYWORD = 'xiao'
 
-
+#When use user spider, will use this user id
+USER_ID = '29297647'
 # The need to crawl rank type
 # type:
 #   daily
 #   weekly
-#   month
+#   monthly
 #   rookie
-RANK_TYPE = 'daily'
+
+RANK_TYPE = 'monthly'
 
 # If not none,  crawl before date by RANK_TYPE
 # Warnings: A error value, will be 404 nof found
 RANK_DATE = '20220801'
-
-# Crawl maximum of rank
-RANK_PAGE_MAXIMUM = 1
 
 # Proxy
 REQUEST_PROXY = 'http://localhost:7890'
@@ -47,7 +46,11 @@ SAVE_DIR = 'PixivAndSoOnCrawler/images'
 ONE_KEYWORD_ONE_DIR = True
 
 # If set, only crawl r18
-R18_MODE = True
+R18_MODE = False
+
+#If not none, only crawl in tags
+TAGS_FILTER = False
+TAGS_LIST = ['原神']
 
 
 # DOWNLOAD_DELAY = 1 #(s)
@@ -69,7 +72,9 @@ Cookie = ''
 PIXIV_API = {
     'search': 'https://www.pixiv.net/ajax/search/illustrations/{}?word={}&order=date_d&p={}&s_mode=s_tag&type=illust_and_ugoira&lang=zh',
     'artworks': 'https://www.pixiv.net/artworks/{}',
-    'rank': 'https://www.pixiv.net/ranking.php?mode={}&content=illust&date={}&p={}&format=json'
+    'rank': 'https://www.pixiv.net/ranking.php?mode={}&content=illust&date={}&p={}&format=json',
+    'user_profile':'https://www.pixiv.net/ajax/user/{}/profile/all?lang=zh',
+    'user_artwork':'https://www.pixiv.net/ajax/user/{}/profile/illusts?{}&work_category=illustManga&is_first_page=0&lang=zh'
 }
 
 
