@@ -20,10 +20,10 @@ NEWSPIDER_MODULE = 'PixivAndSoOnCrawler.spiders'
 IMAGE_PAGE_NUM = 20
 
 # When use keyword spider, will use this keyword
-KEYWORD = 'xiao'
+KEYWORD = ''
 
 #When use user spider, will use this user id
-USER_ID = '29297647'
+USER_ID = ''
 # The need to crawl rank type
 # type:
 #   daily
@@ -48,9 +48,17 @@ ONE_KEYWORD_ONE_DIR = True
 # If set, only crawl r18
 R18_MODE = False
 
-#If not none, only crawl in tags
-TAGS_FILTER = False
+#If set as true, only crawl in tags
+TAGS_FILTER = True
 TAGS_LIST = ['原神']
+
+# If set as true, only crawl size of MINMUM to MAXMUM
+IMAGE_SIZE_FILTER = True
+IMAGE_MINIMUM_WIDTH = 0
+IMAGE_MINIMUM_HEIGHT = 0
+
+IMAGE_MAXIMUM_WIDTH = 0
+IMAGE_MAXIMUM_HEIGHT = 0
 
 
 # DOWNLOAD_DELAY = 1 #(s)
@@ -71,7 +79,7 @@ Cookie = ''
 
 PIXIV_API = {
     'search': 'https://www.pixiv.net/ajax/search/illustrations/{}?word={}&order=date_d&p={}&s_mode=s_tag&type=illust_and_ugoira&lang=zh',
-    'artworks': 'https://www.pixiv.net/artworks/{}',
+    'artworks': 'https://www.pixiv.net/ajax/illust/{}/pages?lang=zh',
     'rank': 'https://www.pixiv.net/ranking.php?mode={}&content=illust&date={}&p={}&format=json',
     'user_profile':'https://www.pixiv.net/ajax/user/{}/profile/all?lang=zh',
     'user_artwork':'https://www.pixiv.net/ajax/user/{}/profile/illusts?{}&work_category=illustManga&is_first_page=0&lang=zh'

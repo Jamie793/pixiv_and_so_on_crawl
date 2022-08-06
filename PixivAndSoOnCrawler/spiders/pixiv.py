@@ -1,9 +1,8 @@
-from urllib.parse import quote
 import scrapy
 from scrapy import *
 from ..items import DataItem
 from ..settings import *
-
+from ..filter import ArtworkFilter
 
 class KeywordSpider(scrapy.Spider):
     name = 'pixiv_keyword_spider'
@@ -37,16 +36,7 @@ class KeywordSpider(scrapy.Spider):
         data = data['body']['illust']['data']
 
         for i in data:
-            if TAGS_FILTER:
-                flag = False
-                for j in i['tags']:
-                    if j in TAGS_LIST:
-                        flag = True
-                        break
-            else:
-                flag = True
-
-            if flag:
+            if ArtworkFilter.filter_by_option(i, 'cz'):
                 yield Request(i['url'], meta={
                     'info': i,
                     'keyword': response.meta['keyword'],
@@ -58,16 +48,18 @@ class KeywordSpider(scrapy.Spider):
         yield Request(url, meta={'keyword': self.keyword}, callback=self.parse)
 
     def parse_thumb(self, response):
-        if response:
+        if ArtworkFilter.filter_thumb(response.meta['info'], response):
             yield Request(PIXIV_API['artworks'].format(response.meta['info']['id']), meta={
                 'info': response.meta['info'],
                 'keyword': response.meta['keyword']
             }, callback=self.parse_image)
 
     def parse_image(self, response):
-        url = response.xpath(
-            "//link[@rel='preload' and @as='image']/@href").get()
-        yield Request(url, meta=response.meta, callback=self.download_image)
+        body = response.json()['body']
+        if len(body) == 0:
+            return
+        for i in body:
+            yield Request(i['urls']['original'], meta=response.meta, callback=self.download_image)
 
     def download_image(self, response):
         data = DataItem()
@@ -75,6 +67,9 @@ class KeywordSpider(scrapy.Spider):
         data['id'] = response.meta['info']['id']
         data['data'] = response.body
         return data
+
+
+
 
 
 class RankSpider(scrapy.Spider):
@@ -103,16 +98,7 @@ class RankSpider(scrapy.Spider):
             return
 
         for i in contents:
-            if TAGS_FILTER:
-                flag = False
-                for j in i['tags']:
-                    if j in TAGS_LIST:
-                        flag = True
-                        break
-            else:
-                flag = True
-
-            if flag:
+            if ArtworkFilter.filter_by_option(i, option='zc'):
                 yield Request(i['url'], meta={
                     'info': i,
                     'keyword': '%s_%s' % (RANK_TYPE, RANK_DATE)
@@ -122,14 +108,16 @@ class RankSpider(scrapy.Spider):
         yield Request(PIXIV_API['rank'].format(RANK_TYPE, RANK_DATE, self.page), callback=self.parse)
 
     def parse_thumb(self, response):
-        if response:
+        if ArtworkFilter.filter_thumb(response.meta['info'], response):
             yield Request(PIXIV_API['artworks'].format(response.meta['info']['illust_id']),
                           meta=response.meta, callback=self.parse_image)
 
     def parse_image(self, response):
-        url = response.xpath(
-            "//link[@rel='preload' and @as='image']/@href").get()
-        yield Request(url, meta=response.meta, callback=self.download_image)
+        body = response.json()['body']
+        if len(body) == 0:
+            return
+        for i in body:
+            yield Request(i['urls']['original'], meta=response.meta, callback=self.download_image)
 
     def download_image(self, response):
         data = DataItem()
@@ -137,6 +125,10 @@ class RankSpider(scrapy.Spider):
         data['id'] = response.meta['info']['illust_id']
         data['data'] = response.body
         return data
+
+
+
+
 
 
 class UserSpider(scrapy.Spider):
@@ -173,27 +165,20 @@ class UserSpider(scrapy.Spider):
         data = dict(response.json()['body']['works'])
         for i in data.keys():
             k = data[i]
-            if TAGS_FILTER:
-                flag = False
-                for j in k['tags']:
-                    if j in TAGS_LIST:
-                        flag = True
-                        break
-            else:
-                flag = True
-
-            if flag:
+            if ArtworkFilter.filter_by_option(k, 'cz'):
                 yield Request(k['url'], meta={'info': k, 'keyword': response.meta['user_id']}, callback=self.parse_thumb)
 
     def parse_thumb(self, response):
-        if response:
+        if ArtworkFilter.filter_thumb(response.meta['info'], response):
             yield Request(PIXIV_API['artworks'].format(response.meta['info']['id']),
                           meta=response.meta, callback=self.parse_image)
 
     def parse_image(self, response):
-        url = response.xpath(
-            "//link[@rel='preload' and @as='image']/@href").get()
-        yield Request(url, meta=response.meta, callback=self.download_image)
+        body = response.json()['body']
+        if len(body) == 0:
+            return
+        for i in body:
+            yield Request(i['urls']['original'], meta=response.meta, callback=self.download_image)
 
     def download_image(self, response):
         data = DataItem()
