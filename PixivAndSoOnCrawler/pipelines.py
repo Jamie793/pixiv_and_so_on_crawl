@@ -6,6 +6,7 @@
 
 # useful for handling different item types with a single interface
 import os
+import re
 from urllib.request import Request
 from itemadapter import ItemAdapter
 from PixivAndSoOnCrawler.items import DataItem, ImageItem
@@ -22,7 +23,7 @@ class PixivandsooncrawlerPipeline:
                 path = os.path.join(path, item['keyword'])
 
             name = ARTWORK_Title.replace('{id}', item['id'])\
-            .replace('{title}', item['title'])\
+            .replace('{title}', re.sub('[\||/|:|\*|\?|"|<|>|\|]','',item['title']))\
             .replace('{user_name}', item['user_name'])\
             .replace('{user_id}', item['user_id'])\
             .replace('{date}', item['date'])

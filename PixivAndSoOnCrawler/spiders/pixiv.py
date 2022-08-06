@@ -1,3 +1,5 @@
+
+import time
 import scrapy
 from scrapy import *
 from ..items import DataItem
@@ -191,6 +193,77 @@ class UserSpider(scrapy.Spider):
     def download_image(self, response):
         data = DataItem()
         data['keyword'] = response.meta['keyword']
+        data['id'] = response.meta['info']['id']
+        data['title'] = response.meta['info']['title']
+        data['user_name'] = response.meta['info']['userName']
+        data['user_id'] = response.meta['info']['userId']
+        data['date'] = response.meta['info']['createDate']
+        data['data'] = response.body
+        return data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class DiscoverySpider(scrapy.Spider):
+    name = 'pixiv_discovery_spider'
+
+    def __init__(self, name=None, **kwargs):
+        super().__init__(name, **kwargs)
+
+        self.cur_page = 1
+
+        self.page = int(getattr(self, 'page', False)) if getattr(
+            self, 'page', False) else IMAGE_PAGE_NUM
+
+        self.r18 = bool(getattr(self, 'r18', False)) if getattr(
+            self, 'r18', False) else R18_MODE
+        
+        self.time = time.strftime('%Y-%m-%d_%H-%M-%S')
+
+        type = 'all'
+        if self.r18:
+            type = 'r18'
+
+        PIXIV_API['recommend'] = PIXIV_API['recommend'].format(type)
+
+
+    def start_requests(self):
+        for i in range(self.page + 1):
+            yield Request(PIXIV_API['recommend'], callback=self.parse)
+
+    def parse(self, response, **kwargs):
+        illusts = response.json()['body']['thumbnails']['illust']
+        for i in illusts:
+            if ArtworkFilter.filter_by_option(i, 'zc'):
+                yield Request(i['url'], meta={'info':i}, callback=self.parse_thumb)
+        
+
+    def parse_thumb(self, response):
+        if ArtworkFilter.filter_thumb(response.meta['info'], response):
+            yield Request(PIXIV_API['artworks'].format(response.meta['info']['id']),
+                          meta=response.meta, callback=self.parse_image)
+
+    def parse_image(self, response):
+        body = response.json()['body']
+        if len(body) == 0:
+            return
+        for i in body:
+            yield Request(i['urls']['original'], meta=response.meta, callback=self.download_image)
+
+    def download_image(self, response):
+        data = DataItem()
+        data['keyword'] = 'discovery_%s' % self.time
         data['id'] = response.meta['info']['id']
         data['title'] = response.meta['info']['title']
         data['user_name'] = response.meta['info']['userName']

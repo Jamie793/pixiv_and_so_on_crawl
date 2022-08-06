@@ -50,10 +50,10 @@ ARTWORK_Title = '{id}-{title}'
 ONE_KEYWORD_ONE_DIR = True
 
 # If set, only crawl r18
-R18_MODE = False
+R18_MODE = True
 
 #If set as true, only crawl in tags
-TAGS_FILTER = True
+TAGS_FILTER = False
 TAGS_LIST = ['原神']
 
 # If set as true, only crawl size of MINMUM to MAXMUM
@@ -86,7 +86,8 @@ PIXIV_API = {
     'artworks': 'https://www.pixiv.net/ajax/illust/{}/pages?lang=zh',
     'rank': 'https://www.pixiv.net/ranking.php?mode={}&content=illust&date={}&p={}&format=json',
     'user_profile':'https://www.pixiv.net/ajax/user/{}/profile/all?lang=zh',
-    'user_artwork':'https://www.pixiv.net/ajax/user/{}/profile/illusts?{}&work_category=illustManga&is_first_page=0&lang=zh'
+    'user_artwork':'https://www.pixiv.net/ajax/user/{}/profile/illusts?{}&work_category=illustManga&is_first_page=0&lang=zh',
+    'recommend':'https://www.pixiv.net/ajax/discovery/artworks?mode={}&limit=60&lang=zh'
 }
 
 
