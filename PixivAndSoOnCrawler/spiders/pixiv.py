@@ -210,7 +210,7 @@ class UserSpider(scrapy.Spider):
 
     def download_image(self, response):
         data = DataItem()
-        data['keyword'] = 'user_' % response.meta['keyword']
+        data['keyword'] = 'user_%s' % response.meta['keyword']
         data['id'] = response.meta['info']['id']
         data['title'] = response.meta['info']['title']
         data['user_name'] = response.meta['info']['userName']
