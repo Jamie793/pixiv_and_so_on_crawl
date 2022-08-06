@@ -22,4 +22,6 @@ class DataItem(scrapy.Item):
     user_id = scrapy.Field()
     date = scrapy.Field()
     data = scrapy.Field()
+    subtitle = scrapy.Field()
+    ext = scrapy.Field()
     pass
