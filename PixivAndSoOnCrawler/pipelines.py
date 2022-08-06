@@ -8,7 +8,6 @@
 import os
 import re
 from urllib.request import Request
-from itemadapter import ItemAdapter
 from PixivAndSoOnCrawler.items import DataItem, ImageItem
 from PixivAndSoOnCrawler.settings import *
 
