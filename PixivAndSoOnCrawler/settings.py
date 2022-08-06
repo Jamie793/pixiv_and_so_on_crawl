@@ -43,6 +43,10 @@ REQUEST_PROXY = 'http://localhost:7890'
 # Image save path
 SAVE_DIR = 'PixivAndSoOnCrawler/images'
 
+# Title format template
+#   {id}, {title}, {user_name}, {user_id}, {user_date}
+ARTWORK_Title = '{id}-{title}'
+
 ONE_KEYWORD_ONE_DIR = True
 
 # If set, only crawl r18

@@ -16,8 +16,10 @@ class ImageItem(scrapy.Item):
 class DataItem(scrapy.Item):
     # define the fields for your item here like:
     keyword = scrapy.Field()
-    info = scrapy.Field()
-    type = scrapy.Field()
     id = scrapy.Field()
+    title = scrapy.Field()
+    user_name = scrapy.Field()
+    user_id = scrapy.Field()
+    date = scrapy.Field()
     data = scrapy.Field()
     pass

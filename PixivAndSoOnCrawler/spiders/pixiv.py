@@ -65,6 +65,10 @@ class KeywordSpider(scrapy.Spider):
         data = DataItem()
         data['keyword'] = response.meta['keyword']
         data['id'] = response.meta['info']['id']
+        data['title'] = response.meta['info']['title']
+        data['user_name'] = response.meta['info']['userName']
+        data['user_id'] = response.meta['info']['userId']
+        data['date'] = response.meta['info']['createDate']
         data['data'] = response.body
         return data
 
@@ -123,6 +127,10 @@ class RankSpider(scrapy.Spider):
         data = DataItem()
         data['keyword'] = response.meta['keyword']
         data['id'] = response.meta['info']['illust_id']
+        data['title'] = response.meta['info']['title']
+        data['user_name'] = response.meta['info']['user_name']
+        data['user_id'] = response.meta['info']['user_id']
+        data['date'] = response.meta['info']['date']
         data['data'] = response.body
         return data
 
@@ -184,5 +192,9 @@ class UserSpider(scrapy.Spider):
         data = DataItem()
         data['keyword'] = response.meta['keyword']
         data['id'] = response.meta['info']['id']
+        data['title'] = response.meta['info']['title']
+        data['user_name'] = response.meta['info']['userName']
+        data['user_id'] = response.meta['info']['userId']
+        data['date'] = response.meta['info']['createDate']
         data['data'] = response.body
         return data

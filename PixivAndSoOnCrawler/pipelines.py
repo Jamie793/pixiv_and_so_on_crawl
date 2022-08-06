@@ -21,6 +21,12 @@ class PixivandsooncrawlerPipeline:
                     os.mkdir(os.path.join(path, item['keyword']))
                 path = os.path.join(path, item['keyword'])
 
-            with open(os.path.join(path, '%s.jpg' % str(item['id'])), 'wb') as f:
+            name = ARTWORK_Title.replace('{id}', item['id'])\
+            .replace('{title}', item['title'])\
+            .replace('{user_name}', item['user_name'])\
+            .replace('{user_id}', item['user_id'])\
+            .replace('{date}', item['date'])
+
+            with open(os.path.join(path, '%s.jpg' % name), 'wb') as f:
                 f.write(item['data'])
         # return item
