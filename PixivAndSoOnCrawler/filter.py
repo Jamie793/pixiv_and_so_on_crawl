@@ -5,7 +5,7 @@ class ArtworkFilter:
         self.filter_list = []
 
     def add_filter(self, filter):
-        self.filter_list.append(filter())
+        self.filter_list.append(filter)
 
     def filter(self, info, raw=None):
         flag = True

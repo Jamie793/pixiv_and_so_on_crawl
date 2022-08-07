@@ -10,8 +10,8 @@ from ..settings import *
 from ..filter import ArtworkFilter
 
 artworkFilter = ArtworkFilter()
-artworkFilter.add_filter(TagsFilter)
-artworkFilter.add_filter(ImageFilter)
+artworkFilter.add_filter(TagsFilter())
+artworkFilter.add_filter(ImageFilter())
 
 
 class KeywordSpider(scrapy.Spider):
