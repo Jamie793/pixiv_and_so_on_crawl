@@ -19,10 +19,10 @@ NEWSPIDER_MODULE = 'PixivAndSoOnCrawler.spiders'
 # The image page num, per page 60 or 50 num
 IMAGE_PAGE_NUM = 20
 
-# When use keyword spider, will use this keyword
+# When keyword crawling is used, this keyword is used by default if it is not set
 KEYWORD = ''
 
-#When use user spider, will use this user id
+#When using user spider, will use this user-id
 USER_ID = ''
 # The need to crawl rank type
 # type:
@@ -33,7 +33,7 @@ USER_ID = ''
 
 RANK_TYPE = 'monthly'
 
-# If not none,  crawl before date by RANK_TYPE
+# If not none, it will crawl before the RANK_DATE
 # Warnings: A error value, will be 404 nof found
 RANK_DATE = '20220801'
 
@@ -47,10 +47,11 @@ SAVE_DIR = 'PixivAndSoOnCrawler/images'
 #   {id}, {title}, {user_name}, {user_id}, {user_date}
 ARTWORK_Title = '{id}-{title}'
 
+# If set true will make a directory of every keyword
 ONE_KEYWORD_ONE_DIR = True
 
 # If set, only crawl r18
-R18_MODE = True
+R18_MODE = False
 
 #If set as true, only crawl in tags
 TAGS_FILTER = False
@@ -68,7 +69,7 @@ IMAGE_MAXIMUM_HEIGHT = 0
 # DOWNLOAD_DELAY = 1 #(s)
 
 # The download delay setting will honor only one of:
-CONCURRENT_REQUESTS_PER_DOMAIN = 16
+# CONCURRENT_REQUESTS_PER_DOMAIN = 16
 CONCURRENT_REQUESTS_PER_IP = 32
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
@@ -148,6 +149,8 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
     'PixivAndSoOnCrawler.pipelines.PixivandsooncrawlerPipeline': 300,
 }
+
+
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
