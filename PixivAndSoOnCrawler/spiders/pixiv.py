@@ -2,9 +2,17 @@
 import time
 import scrapy
 from scrapy import *
+
+from ..filters.ImageFilter import ImageFilter
+from ..filters.TagsFilter import TagsFilter
 from ..items import DataItem
 from ..settings import *
 from ..filter import ArtworkFilter
+
+artworkFilter = ArtworkFilter()
+artworkFilter.add_filter(TagsFilter)
+artworkFilter.add_filter(ImageFilter)
+
 
 class KeywordSpider(scrapy.Spider):
     name = 'pixiv_keyword_spider'
@@ -38,7 +46,7 @@ class KeywordSpider(scrapy.Spider):
         data = data['body']['illust']['data']
 
         for i in data:
-            if ArtworkFilter.filter_by_option(i, 'cz'):
+            if artworkFilter.filter(i):
                 yield Request(i['url'], meta={
                     'info': i,
                     'keyword': response.meta['keyword'],
@@ -50,7 +58,7 @@ class KeywordSpider(scrapy.Spider):
         yield Request(url, meta={'keyword': self.keyword}, callback=self.parse)
 
     def parse_thumb(self, response):
-        if ArtworkFilter.filter_thumb(response.meta['info'], response):
+        if artworkFilter.filter(None, response):
             yield Request(PIXIV_API['artworks'].format(response.meta['info']['id']), 
             meta=response.meta, callback=self.parse_image)
 
@@ -110,7 +118,7 @@ class RankSpider(scrapy.Spider):
             return
 
         for i in contents:
-            if ArtworkFilter.filter_by_option(i, option='zc'):
+            if artworkFilter.filter(i, response):
                 yield Request(i['url'], meta={
                     'info': i,
                     'keyword': '%s_%s' % (RANK_TYPE, RANK_DATE)
@@ -120,7 +128,7 @@ class RankSpider(scrapy.Spider):
         yield Request(PIXIV_API['rank'].format(RANK_TYPE, RANK_DATE, self.cur_page), callback=self.parse)
 
     def parse_thumb(self, response):
-        if ArtworkFilter.filter_thumb(response.meta['info'], response):
+        if artworkFilter.filter(None, response):
             yield Request(PIXIV_API['artworks'].format(response.meta['info']['illust_id']),
                           meta=response.meta, callback=self.parse_image)
 
@@ -188,11 +196,11 @@ class UserSpider(scrapy.Spider):
         data = dict(response.json()['body']['works'])
         for i in data.keys():
             k = data[i]
-            if ArtworkFilter.filter_by_option(k, 'cz'):
+            if artworkFilter.filter(k, response):
                 yield Request(k['url'], meta={'info': k, 'keyword': response.meta['user_id']}, callback=self.parse_thumb)
 
     def parse_thumb(self, response):
-        if ArtworkFilter.filter_thumb(response.meta['info'], response):
+        if artworkFilter.filter(None, response):
             yield Request(PIXIV_API['artworks'].format(response.meta['info']['id']),
                           meta=response.meta, callback=self.parse_image)
 
