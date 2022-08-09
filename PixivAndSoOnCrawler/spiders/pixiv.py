@@ -16,6 +16,64 @@ artworkFilter.add_filter(TagsFilter())
 artworkFilter.add_filter(ImageFilter())
 
 
+class SpiderUtils:
+
+
+    @staticmethod
+    def parse_image(self, response):
+        data = []
+        body = response.json()['body']
+        if len(body) == 0:
+            return
+            
+        for i, v in enumerate(body):
+            self.tqdm.total += 1
+            url:str = v['urls']['original']
+            response.meta.update({
+                'subtitle': '_p%d' % i,
+                'ext': url.split('.')[-1]
+            })
+            data.append(Request(url, meta=response.meta, callback=self.download_image))
+        return data
+
+
+
+    @staticmethod
+    def download_image(self, response):
+        data = DataItem()
+        data['keyword'] = response.meta['keyword']
+
+        if 'id' in response.meta['info']:
+            data['id'] = response.meta['info']['id']
+        elif 'illust_id' in response.meta['info']:
+            data['id'] = response.meta['info']['illust_id']
+
+        data['title'] = response.meta['info']['title']
+
+        if 'userName' in response.meta['info']:
+            data['user_name'] = response.meta['info']['userName']
+        elif 'user_name' in response.meta['info']:
+            data['user_name'] = response.meta['info']['user_name']
+
+
+        if 'userId' in response.meta['info']:
+            data['user_id'] = response.meta['info']['userId']
+        elif 'user_name' in response.meta['info']:
+            data['user_id'] = response.meta['info']['user_id']
+
+
+        if 'createDate' in response.meta['info']:
+            data['date'] = response.meta['info']['createDate']
+        elif 'date' in response.meta['info']:
+            data['date'] = response.meta['info']['date']
+
+
+        data['data'] = response.body
+        data['subtitle'] = response.meta['subtitle']
+        data['ext'] = response.meta['ext']
+        data['progress'] = self.tqdm
+        return data
+
 class KeywordSpider(scrapy.Spider):
     name = 'pixiv_keyword_spider'
 
@@ -67,32 +125,11 @@ class KeywordSpider(scrapy.Spider):
             meta=response.meta, callback=self.parse_image)
 
     def parse_image(self, response):
-        body = response.json()['body']
-        if len(body) == 0:
-            return
-            
-        for i, v in enumerate(body):
-            self.tqdm.total += 1
-            url:str = v['urls']['original']
-            response.meta.update({
-                'subtitle': '_p%d' % i,
-                'ext': url.split('.')[-1]
-            })
-            yield Request(url, meta=response.meta, callback=self.download_image)
+        for i in SpiderUtils.parse_image(self, response):
+            yield i
 
     def download_image(self, response):
-        data = DataItem()
-        data['keyword'] = response.meta['keyword']
-        data['id'] = response.meta['info']['id']
-        data['title'] = response.meta['info']['title']
-        data['user_name'] = response.meta['info']['userName']
-        data['user_id'] = response.meta['info']['userId']
-        data['date'] = response.meta['info']['createDate']
-        data['data'] = response.body
-        data['subtitle'] = response.meta['subtitle']
-        data['ext'] = response.meta['ext']
-        data['progress'] = self.tqdm
-        return data
+        return SpiderUtils.download_image(self, response)
 
 
 
@@ -141,31 +178,11 @@ class RankSpider(scrapy.Spider):
                           meta=response.meta, callback=self.parse_image)
 
     def parse_image(self, response):
-        body = response.json()['body']
-        if len(body) == 0:
-            return
-        for i, v in enumerate(body):
-            self.tqdm.total += 1
-            url:str = v['urls']['original']
-            response.meta.update({
-                'subtitle': '_p-%d' % i,
-                'ext': url.split('.')[-1]
-            })
-            yield Request(url, meta=response.meta, callback=self.download_image)
+        for i in SpiderUtils.parse_image(self, response):
+            yield i
 
     def download_image(self, response):
-        data = DataItem()
-        data['keyword'] = response.meta['keyword']
-        data['id'] = response.meta['info']['illust_id']
-        data['title'] = response.meta['info']['title']
-        data['user_name'] = response.meta['info']['user_name']
-        data['user_id'] = response.meta['info']['user_id']
-        data['date'] = response.meta['info']['date']
-        data['data'] = response.body
-        data['subtitle'] = response.meta['subtitle']
-        data['ext'] = response.meta['ext']
-        data['progress'] = self.tqdm
-        return data
+        return SpiderUtils.download_image(self, response)
 
 
 
@@ -210,7 +227,8 @@ class UserSpider(scrapy.Spider):
         for i in data.keys():
             k = data[i]
             if artworkFilter.filter(k):
-                yield Request(k['url'], meta={'info': k, 'keyword': response.meta['user_id']}, callback=self.parse_thumb)
+                yield Request(k['url'], meta={'info': k, 'keyword': 'user_%s' % str(response.meta['user_id'])}, 
+                callback=self.parse_thumb)
 
     def parse_thumb(self, response):
         if artworkFilter.filter(None, response):
@@ -218,31 +236,11 @@ class UserSpider(scrapy.Spider):
                           meta=response.meta, callback=self.parse_image)
 
     def parse_image(self, response):
-        body = response.json()['body']
-        if len(body) == 0:
-            return
-        for i, v in enumerate(body):
-            self.tqdm.total += 1
-            url:str = v['urls']['original']
-            response.meta.update({
-                'subtitle': '_p-%d' % i,
-                'ext': url.split('.')[-1]
-            })
-            yield Request(url, meta=response.meta, callback=self.download_image)
+        for i in SpiderUtils.parse_image(self, response):
+            yield i
 
     def download_image(self, response):
-        data = DataItem()
-        data['keyword'] = 'user_%s' % response.meta['keyword']
-        data['id'] = response.meta['info']['id']
-        data['title'] = response.meta['info']['title']
-        data['user_name'] = response.meta['info']['userName']
-        data['user_id'] = response.meta['info']['userId']
-        data['date'] = response.meta['info']['createDate']
-        data['data'] = response.body
-        data['subtitle'] = response.meta['subtitle']
-        data['ext'] = response.meta['ext']
-        data['progress'] = self.tqdm
-        return data
+        return SpiderUtils.download_image(self, response)
 
 
 
@@ -280,7 +278,7 @@ class DiscoverySpider(scrapy.Spider):
     def parse(self, response, **kwargs):
         illusts = response.json()['body']['thumbnails']['illust']
         for i in illusts:
-            if ArtworkFilter.filter_by_option(i, 'zc'):
+            if artworkFilter.filter(i):
                 yield Request(i['url'], meta={'info':i}, callback=self.parse_thumb)
 
         self.cur_page += 1
@@ -289,33 +287,14 @@ class DiscoverySpider(scrapy.Spider):
         
 
     def parse_thumb(self, response):
-        if ArtworkFilter.filter_thumb(response.meta['info'], response):
+        if artworkFilter.filter(None ,response):
             yield Request(PIXIV_API['artworks'].format(response.meta['info']['id']),
                           meta=response.meta, callback=self.parse_image)
 
     def parse_image(self, response):
-        body = response.json()['body']
-        if len(body) == 0:
-            return
-        for i, v in enumerate(body):
-            self.tqdm.total += 1
-            url:str = v['urls']['original']
-            response.meta.update({
-                'subtitle': '_p-%d' % i,
-                'ext': url.split('.')[-1]
-            })
-            yield Request(url, meta=response.meta, callback=self.download_image)
+        for i in SpiderUtils.parse_image(self, response):
+            yield i
 
     def download_image(self, response):
-        data = DataItem()
-        data['keyword'] = 'discovery_%s' % self.time
-        data['id'] = response.meta['info']['id']
-        data['title'] = response.meta['info']['title']
-        data['user_name'] = response.meta['info']['userName']
-        data['user_id'] = response.meta['info']['userId']
-        data['date'] = response.meta['info']['createDate']
-        data['data'] = response.body
-        data['subtitle'] = response.meta['subtitle']
-        data['ext'] = response.meta['ext']
-        data['progress'] = self.tqdm
-        return data
+        response.meta['keyword'] = "discovery_%s" % self.time
+        return SpiderUtils.download_image(self, response)
