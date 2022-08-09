@@ -17,7 +17,7 @@ NEWSPIDER_MODULE = 'PixivAndSoOnCrawler.spiders'
 
 # User configuration
 # The image page num, per page 60 or 50 num
-IMAGE_PAGE_NUM = 20
+IMAGE_PAGE_NUM = 50
 
 # When keyword crawling is used, this keyword is used by default if it is not set
 KEYWORD = ''
@@ -65,6 +65,8 @@ IMAGE_MINIMUM_HEIGHT = 0
 IMAGE_MAXIMUM_WIDTH = 0
 IMAGE_MAXIMUM_HEIGHT = 0
 
+# User Cookie
+Cookie = ''
 
 # DOWNLOAD_DELAY = 1 #(s)
 
@@ -75,8 +77,6 @@ CONCURRENT_REQUESTS_PER_IP = 32
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 CONCURRENT_REQUESTS = 32
 
-# User Cookie
-Cookie = ''
 
 
 # =======================================END===========================================
@@ -86,8 +86,8 @@ PIXIV_API = {
     'search': 'https://www.pixiv.net/ajax/search/illustrations/{}?word={}&order=date_d&p={}&s_mode=s_tag&type=illust_and_ugoira&lang=zh',
     'artworks': 'https://www.pixiv.net/ajax/illust/{}/pages?lang=zh',
     'rank': 'https://www.pixiv.net/ranking.php?mode={}&content=illust&date={}&p={}&format=json',
-    'user_profile':'https://www.pixiv.net/ajax/user/{}/profile/all?lang=zh',
-    'user_artwork':'https://www.pixiv.net/ajax/user/{}/profile/illusts?{}&work_category=illustManga&is_first_page=0&lang=zh',
+    # 'user_profile':'https://www.pixiv.net/ajax/user/{}/profile/all?lang=zh',
+    'user_artwork':'https://www.pixiv.net/ajax/user/{}/illustmanga/tag?&offset={}&limit=48&lang=zh&tag=',
     'recommend':'https://www.pixiv.net/ajax/discovery/artworks?mode={}&limit=60&lang=zh'
 }
 
@@ -97,6 +97,8 @@ PIXIV_API = {
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
 
 REDIRECT_ENABLED = False
+
+LOG_LEVEL = 'ERROR'
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
