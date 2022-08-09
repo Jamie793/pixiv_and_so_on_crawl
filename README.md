@@ -3,6 +3,8 @@
 ![](https://img.shields.io/badge/environment-python-green)
 ![](https://img.shields.io/badge/package-scrapy-blue)
 
+[中文文档](https://github.com/Jamie793/pixiv_and_so_on_crawl/blob/master/README-zh.md)
+
 This is spider based on scrapy . The spider can crawl "pixiv" artwork and so on. There are many options selected for you, you can set it by your hobby. The project provides many spider options.  
 - If you just crawl by keyword, you can use "pixiv_keyword_spider".  
 - If you just crawl by the rank board, you can use "pixiv_rank_spider".  
