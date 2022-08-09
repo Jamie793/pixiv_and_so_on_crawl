@@ -24,4 +24,5 @@ class DataItem(scrapy.Item):
     data = scrapy.Field()
     subtitle = scrapy.Field()
     ext = scrapy.Field()
+    progress = scrapy.Field()
     pass

@@ -22,13 +22,15 @@ class PixivandsooncrawlerPipeline:
                 path = os.path.join(path, item['keyword'])
 
             name = ARTWORK_Title.replace('{id}', str(item['id']))\
-            .replace('{title}', re.sub('[\||/|:|\*|\?|"|<|>|\|]','',item['title']))\
-            .replace('{user_name}', item['user_name'])\
-            .replace('{user_id}', str(item['user_id']))\
-            .replace('{date}', item['date'])
+                .replace('{title}', re.sub('[\||/|:|\*|\?|"|<|>]', '', item['title'].replace('\\','')))\
+                .replace('{user_name}', item['user_name'])\
+                .replace('{user_id}', str(item['user_id']))\
+                .replace('{date}', item['date'])
 
             name += item['subtitle']
 
             with open(os.path.join(path, '%s.%s' % (name, item['ext'])), 'wb') as f:
                 f.write(item['data'])
+                item['progress'].update(item['progress'].pos +1)
+                
         # return item

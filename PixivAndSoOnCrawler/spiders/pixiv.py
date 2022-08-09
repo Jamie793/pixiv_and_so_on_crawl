@@ -1,7 +1,9 @@
 
+import logging
 import time
 import scrapy
 from scrapy import *
+from tqdm import tqdm
 
 from ..filters.ImageFilter import ImageFilter
 from ..filters.TagsFilter import TagsFilter
@@ -29,6 +31,8 @@ class KeywordSpider(scrapy.Spider):
 
         self.r18 = bool(getattr(self, 'r18', False)) if getattr(
             self, 'r18', False) else R18_MODE
+
+        self.tqdm = tqdm(total=0)
 
         if self.r18:
             PIXIV_API['search'] += '&mode=r18'
@@ -68,6 +72,7 @@ class KeywordSpider(scrapy.Spider):
             return
             
         for i, v in enumerate(body):
+            self.tqdm.total += 1
             url:str = v['urls']['original']
             response.meta.update({
                 'subtitle': '_p%d' % i,
@@ -86,6 +91,7 @@ class KeywordSpider(scrapy.Spider):
         data['data'] = response.body
         data['subtitle'] = response.meta['subtitle']
         data['ext'] = response.meta['ext']
+        data['progress'] = self.tqdm
         return data
 
 
@@ -108,6 +114,8 @@ class RankSpider(scrapy.Spider):
 
         if self.r18:
             RANK_TYPE + '_r18'
+        
+        self.tqdm = tqdm(total=0)
 
     def start_requests(self):
         yield Request(PIXIV_API['rank'].format(RANK_TYPE, RANK_DATE, self.cur_page), callback=self.parse)
@@ -118,7 +126,7 @@ class RankSpider(scrapy.Spider):
             return
 
         for i in contents:
-            if artworkFilter.filter(i, response):
+            if artworkFilter.filter(i):
                 yield Request(i['url'], meta={
                     'info': i,
                     'keyword': '%s_%s' % (RANK_TYPE, RANK_DATE)
@@ -137,6 +145,7 @@ class RankSpider(scrapy.Spider):
         if len(body) == 0:
             return
         for i, v in enumerate(body):
+            self.tqdm.total += 1
             url:str = v['urls']['original']
             response.meta.update({
                 'subtitle': '_p-%d' % i,
@@ -155,6 +164,7 @@ class RankSpider(scrapy.Spider):
         data['data'] = response.body
         data['subtitle'] = response.meta['subtitle']
         data['ext'] = response.meta['ext']
+        data['progress'] = self.tqdm
         return data
 
 
@@ -170,6 +180,9 @@ class UserSpider(scrapy.Spider):
 
         self.user_id = str(int(getattr(self, 'id', False)) if getattr(
             self, 'id', False) else USER_ID)
+
+        self.tqdm = tqdm(total=0)
+        
 
     def start_requests(self):
         yield Request(PIXIV_API['user_profile'].format(self.user_id), meta={'user_id': self.user_id}, callback=self.parse)
@@ -196,7 +209,7 @@ class UserSpider(scrapy.Spider):
         data = dict(response.json()['body']['works'])
         for i in data.keys():
             k = data[i]
-            if artworkFilter.filter(k, response):
+            if artworkFilter.filter(k):
                 yield Request(k['url'], meta={'info': k, 'keyword': response.meta['user_id']}, callback=self.parse_thumb)
 
     def parse_thumb(self, response):
@@ -209,6 +222,7 @@ class UserSpider(scrapy.Spider):
         if len(body) == 0:
             return
         for i, v in enumerate(body):
+            self.tqdm.total += 1
             url:str = v['urls']['original']
             response.meta.update({
                 'subtitle': '_p-%d' % i,
@@ -227,6 +241,7 @@ class UserSpider(scrapy.Spider):
         data['data'] = response.body
         data['subtitle'] = response.meta['subtitle']
         data['ext'] = response.meta['ext']
+        data['progress'] = self.tqdm
         return data
 
 
@@ -248,6 +263,8 @@ class DiscoverySpider(scrapy.Spider):
             self, 'r18', False) else R18_MODE
         
         self.time = time.strftime('%Y-%m-%d_%H-%M-%S')
+
+        self.tqdm = tqdm(total=0)
 
         type = 'all'
         if self.r18:
@@ -281,6 +298,7 @@ class DiscoverySpider(scrapy.Spider):
         if len(body) == 0:
             return
         for i, v in enumerate(body):
+            self.tqdm.total += 1
             url:str = v['urls']['original']
             response.meta.update({
                 'subtitle': '_p-%d' % i,
@@ -299,4 +317,5 @@ class DiscoverySpider(scrapy.Spider):
         data['data'] = response.body
         data['subtitle'] = response.meta['subtitle']
         data['ext'] = response.meta['ext']
+        data['progress'] = self.tqdm
         return data
