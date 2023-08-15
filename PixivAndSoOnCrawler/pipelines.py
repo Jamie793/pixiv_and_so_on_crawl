@@ -20,12 +20,12 @@ class PixivandsooncrawlerPipeline:
                 if not os.path.isdir(os.path.join(path, item['keyword'])):
                     os.mkdir(os.path.join(path, item['keyword']))
                 path = os.path.join(path, item['keyword'])
-
             name = ARTWORK_Title.replace('{id}', str(item['id']))\
                 .replace('{title}', re.sub('[\||/|:|\*|\?|"|<|>]', '', item['title'].replace('\\','')))\
                 .replace('{user_name}', item['user_name'])\
                 .replace('{user_id}', str(item['user_id']))\
-                .replace('{date}', item['date'])
+                .replace('{date}', item['date'])\
+                .replace('{tags}', ARTWORK_TAG_SPLIT.join(item['tags']))
 
             name += item['subtitle']
 

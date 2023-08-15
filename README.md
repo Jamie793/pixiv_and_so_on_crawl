@@ -18,19 +18,20 @@ This project uses python and scrapy. Go check them out if you don't have them lo
 ## Usage:notebook:
 This use spider prompt start it. For example.
 
-`scrapy crawl pixiv_keyword_spider -a keyword=a -a page=10 -a r18=false`
+`scrapy crawl keyword -a keyword=a -a page=10 -a r18=false`
 
-The following options for you 
+The following spiders for you 
 
-1. pixiv_keyword_spider
-2. pixiv_rank_spider
-3. pixiv_user_spider
+1. user
+2. rank
+3. keyword
+4. discovery
 
 ## Configuration:orange_book:
 You can config your spider in "settings.py"
 
 - General
-  - `Cookie`: User cookie, via type "javascript:prompt('cookie', document.cookie)" in navigation get it
+  - `Cookie`: User cookie, via type "javascript:prompt('cookie', document.cookie)" in browner navigation get it
   - `IMAGE_PAGE_NUM`: The image page num, per page 60 or 50 num
   - `REQUEST_PROXY`: The requests server proxy
   - `SAVE_DIR`: Image save directory
@@ -47,5 +48,7 @@ You can config your spider in "settings.py"
   - `USER_ID`: When using user spider, will use this user-id
 
 - Filter
-  - TAGS_FILTER
-  - IMAGE_SIZE_FILTER
+  - Default Filter:
+    - TAGS_FILTER
+    - IMAGE_SIZE_FILTER
+  - You can custom your Filter in spider_utils.py

@@ -38,14 +38,15 @@ RANK_TYPE = 'monthly'
 RANK_DATE = '20220801'
 
 # Proxy
-REQUEST_PROXY = 'http://localhost:7890'
+REQUEST_PROXY = 'http://localhost:20171'
 
 # Image save path
 SAVE_DIR = 'PixivAndSoOnCrawler/images'
 
 # Title format template
-#   {id}, {title}, {user_name}, {user_id}, {user_date}
-ARTWORK_Title = '{id}-{title}'
+#   {id}, {title}, {user_name}, {user_id}, {user_date}, {tags}
+ARTWORK_Title = '{tags}'
+ARTWORK_TAG_SPLIT = ' '
 
 # If set true will make a directory of every keyword
 ONE_KEYWORD_ONE_DIR = True
@@ -53,9 +54,12 @@ ONE_KEYWORD_ONE_DIR = True
 # If set, only crawl r18
 R18_MODE = False
 
-#If set as true, only crawl in tags
-TAGS_FILTER = False
-TAGS_LIST = ['原神']
+# 0: None 
+# 1:only crawl in tags 
+# 2:except tags
+TAGS_FILTER = 2
+TAGS_LIST = ''.join(['Genshin', "AI", "原神", "GenshinImpact"])
+
 
 # If set as true, only crawl size of MINMUM to MAXMUM
 IMAGE_SIZE_FILTER = True
@@ -72,10 +76,10 @@ Cookie = ''
 
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
-CONCURRENT_REQUESTS_PER_IP = 32
+CONCURRENT_REQUESTS_PER_IP = 16
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 16
 
 
 
@@ -98,14 +102,14 @@ USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 
 REDIRECT_ENABLED = False
 
-LOG_LEVEL = 'ERROR'
+# LOG_LEVEL = 'ERROR'
 
 # Override the default request headers:
 DEFAULT_REQUEST_HEADERS = {
     #   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     #   'Accept-Language': 'en',
     'referer': 'https://www.pixiv.net/',
-    'authority': 'i.pximg.net',
+    'authority': 'www.pixiv.net',
     'Cookie': Cookie,
 }
 

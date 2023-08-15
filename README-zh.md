@@ -16,13 +16,14 @@
 ## Usage:notebook:
 这个使用爬行器命令启动它。
 
-`scrapy crawl pixiv_keyword_spider -a keyword=a -a page=10 -a r18=false`
+`scrapy crawl ekyword -a keyword=a -a page=10 -a r18=false`
 
-以下选项为您提供
+以下爬虫方案任你选择
 
-1. pixiv_keyword_spider
-2. pixiv_rank_spider
-3. pixiv_user_spider
+1. user
+2. rank
+3. keyword
+4. discovery
 
 ## Configuration:orange_book:
 您可以在“settings.py”中配置爬行器。
@@ -45,5 +46,8 @@
   - `USER_ID`: 默认用户ID
 
 - Filter
-  - 标签过滤器
-  - 插画大小过滤器
+  - 自带了默认的过滤器
+    - 标签过滤器
+    - 插画大小过滤器
+  - 你也可以通过修改spider_utils.py实现你自己的过滤器
+
